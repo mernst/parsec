@@ -2,7 +2,7 @@
 
 ParseC parses a C program and writes a JSON representation of the parse tree (the AST).
 
-ParseC is a wrapper around the Clang C parser.
+ParseC uses the Clang compiler frontend to extract source-level syntactic information about the C program, and runs an LLVM pass to perform call-graph analysis. This allows it to sometimes resolve indirect calls (e.g., calls that involve function pointers), resulting an analysis that is potentially more complete than one that uses only Clang or libclang.
 
 ## Installation
 
