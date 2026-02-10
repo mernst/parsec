@@ -61,12 +61,22 @@ int main(int argc, const char **argv) {
 	
 	// Create a virtual file system
 	IntrusiveRefCntPtr<llvm::vfs::InMemoryFileSystem> memFS(new llvm::vfs::InMemoryFileSystem);
-	memFS->addFile("instrumentation_helpers.c", 0, llvm::MemoryBuffer::getMemBuffer(cpp_source));
+	if (addInstr) {
+		memFS->addFile("instrumentation_helpers.c", 0, llvm::MemoryBuffer::getMemBuffer(cpp_source));
+	}
 
-	// Add the virtual file to the tool’s processing list
 	CommonOptionsParser& optionsParser = expectedParser.get();
 	std::vector<std::string> allSources = optionsParser.getSourcePathList();
-	allSources.push_back("instrumentation_helpers.c");  // Include the virtual source file
+
+	std::cout << "Source files being processed:\n";
+	for (const auto& source : allSources) {
+		std::cout << "  " << source << "\n";
+	}
+
+	if (addInstr) {
+		// Add the virtual file to the tool’s processing list
+		allSources.push_back("instrumentation_helpers.c");  // Include the virtual source file
+	}
 
 	// Create a VFS-aware FileManager
 	IntrusiveRefCntPtr<FileManager> fileManager = new FileManager(FileSystemOptions(), memFS);
@@ -76,7 +86,9 @@ int main(int argc, const char **argv) {
 				llvm::vfs::getRealFileSystem(),
 				fileManager);
 
-	tool.mapVirtualFile("instrumentation_helpers.c", cpp_source);
+	if (addInstr) {
+		tool.mapVirtualFile("instrumentation_helpers.c", cpp_source);
+	}
 
 	VisitorConfig config = {
 		.renameMainFunction = renameMain,
