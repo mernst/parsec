@@ -48,8 +48,8 @@ To run it on a full project, you need a `compile_commands.json` compilation data
 Once you have `compile_commands.json`, you can run `parsec` like this:
 
 ```sh
-# [Method 1]
-parsec -p compile_commands.json
+# [Method 1] If `.` is the directory containing `compile_commands.json`, run
+parsec -p .
 # [Method 2] If all your source files are located at the top level of some directory, say `src`
 # From the directory containing compile_commands.json, run
 parsec src/*.c
