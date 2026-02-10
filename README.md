@@ -199,6 +199,6 @@ Each entry represents a global variable.
 
 ## Notes
 
-* Line and column numbers are 1‑indexed.
-* Arrays may be empty if no corresponding entities are found.
-* The output format may evolve; consumers should ignore unknown fields for forward compatibility.
+- Line and column numbers are 1‑indexed.
+- Arrays may be empty if no corresponding entities are found.
+- The output format may evolve; consumers should ignore unknown fields for forward compatibility.
