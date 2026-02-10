@@ -72,6 +72,18 @@ bool FunctionVisitor::VisitFunctionDecl(FunctionDecl *function) {
                 fileName) != config.excludedFiles.end()) {
             return true; // Skip this file
         }
+        
+        const FileEntry *FE = SM.getFileEntryForID(SM.getFileID(startLocation));
+        if (FE) {
+            // Get the FileManager from the SourceManager
+            const FileManager &FM = SM.getFileManager();
+
+            // Get the absolute path
+            llvm::SmallString<256> absPath(FE->getName());
+            FM.getVirtualFileSystem().makeAbsolute(absPath);
+            fileName = std::string(absPath.str());
+        }
+
         const LangOptions langOpts = context->getLangOpts();
         PrintingPolicy Policy(langOpts);
         std::string returnType = function->getReturnType().getAsString(Policy);
@@ -187,6 +199,16 @@ bool FunctionVisitor::VisitTagDecl(TagDecl *tag) {
     if (std::find(config.excludedFiles.begin(), config.excludedFiles.end(), fileName) != config.excludedFiles.end()) {
         return true;
     }
+    const FileEntry *FE = SM.getFileEntryForID(SM.getFileID(startLocation));
+    if (FE) {
+        // Get the FileManager from the SourceManager
+        const FileManager &FM = SM.getFileManager();
+
+        // Get the absolute path
+        llvm::SmallString<256> absPath(FE->getName());
+        FM.getVirtualFileSystem().makeAbsolute(absPath);
+        fileName = std::string(absPath.str());
+    }
 
     int startLine = startLoc.getSpellingLineNumber();
     int endLine = endLoc.getSpellingLineNumber();
@@ -247,6 +269,17 @@ bool FunctionVisitor::VisitVarDecl(VarDecl *var) {
     std::string fileName = SM.getFilename(startLocation).str();
     if (std::find(config.excludedFiles.begin(), config.excludedFiles.end(), fileName) != config.excludedFiles.end()) {
         return true;
+    }
+
+    const FileEntry *FE = SM.getFileEntryForID(SM.getFileID(startLocation));
+    if (FE) {
+        // Get the FileManager from the SourceManager
+        const FileManager &FM = SM.getFileManager();
+
+        // Get the absolute path
+        llvm::SmallString<256> absPath(FE->getName());
+        FM.getVirtualFileSystem().makeAbsolute(absPath);
+        fileName = std::string(absPath.str());
     }
 
     int startLine = startLoc.getSpellingLineNumber();
